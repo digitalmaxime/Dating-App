@@ -1,6 +1,9 @@
 using System;
+using System.Security.Claims;
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +15,7 @@ public class UsersController(DataContext dataContext) : ControllerBase
 {
 
     [HttpGet()]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
     {
         var users = await dataContext.Users.ToListAsync();

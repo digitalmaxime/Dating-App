@@ -9,27 +9,39 @@ using API.Dtos;
 using API.Entities;
 using API.Interfaces;
 using API.Services;
+using FluentValidation;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AccountController(DataContext context, ITokenService tokenService) : ControllerBase
+public class AccountController(DataContext context, ITokenService tokenService, IValidator<RegisterDto> validator) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<IActionResult> Register(RegisterDto registerDto)
     {
+            // validator.ValidateAndThrow(registerDto);
+        var validationResult = validator.Validate(registerDto);
+        if (!validationResult.IsValid)
+        {
+            return UnprocessableEntity(validationResult.Errors);
+        }
+
         using var hmac = new HMACSHA512();
 
-        var user = new AppUser() {
+        var user = new AppUser()
+        {
             UserName = registerDto.Username.ToLower(),
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key
         };
 
-        if(await AlreadyExistingUsername(registerDto.Username)) {
+        if (await AlreadyExistingUsername(registerDto.Username))
+        {
             return BadRequest("username already in use");
         }
 
@@ -37,14 +49,15 @@ public class AccountController(DataContext context, ITokenService tokenService) 
         await context.SaveChangesAsync();
 
         var token = tokenService.CreateToken(user);
-        return new UserDto(user.UserName, token);
+        return Ok(new UserDto(user.UserName, token));
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto) {
+    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    {
         var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
-        
-        if (user == null) return NotFound();
+
+        if (user == null) return NotFound("invalid user");
 
         using var hmac = new HMACSHA512(user.PasswordSalt);
 
@@ -52,8 +65,10 @@ public class AccountController(DataContext context, ITokenService tokenService) 
 
         // if (computedPasswordHash != user.PasswordHash) return BadRequest("invalid password");
 
-        for(int i = 0; i < computedPasswordHash.Length; i++) {
-            if (user.PasswordHash[i] != computedPasswordHash[i]) {
+        for (int i = 0; i < computedPasswordHash.Length; i++)
+        {
+            if (user.PasswordHash[i] != computedPasswordHash[i])
+            {
                 return Unauthorized("invalid password");
             }
         }
@@ -64,7 +79,8 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     }
 
 
-    private async Task<bool> AlreadyExistingUsername(string username) {
+    private async Task<bool> AlreadyExistingUsername(string username)
+    {
         return await context.Users.AnyAsync(u => u.UserName.ToLower() == username.ToLower());
     }
 }

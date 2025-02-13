@@ -14,8 +14,8 @@ namespace API.Controllers;
 public class UsersController(DataContext dataContext) : ControllerBase
 {
 
+    [AllowAnonymous]
     [HttpGet()]
-    [Authorize]
     public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
     {
         var users = await dataContext.Users.ToListAsync();
@@ -23,7 +23,9 @@ public class UsersController(DataContext dataContext) : ControllerBase
         return Ok(users);
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
+
     public async Task<ActionResult<AppUser>> GetUser(int id)
     {
         var user = await dataContext.Users.FindAsync(id);

@@ -1,6 +1,7 @@
 using API.Data;
 using API.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -20,7 +21,9 @@ public class TestErrorController(DataContext context) : ControllerBase
     public ActionResult<AppUser> GetNotFound()
     {
         var thing = context.Users.Find(-1);
+
         if (thing == null) return NotFound("user not found");
+
         return thing;
     }
 

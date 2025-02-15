@@ -22,7 +22,7 @@ namespace API.Controllers;
 public class AccountController(DataContext context, ITokenService tokenService, IValidator<RegisterDto> validator) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterDto registerDto)
+    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
             // validator.ValidateAndThrow(registerDto);
         var validationResult = validator.Validate(registerDto);

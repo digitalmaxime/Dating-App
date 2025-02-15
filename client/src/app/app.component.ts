@@ -5,12 +5,11 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { NavbarComponent } from "./navbar/navbar.component";
 import { AccountService } from './services/account.service';
 import { User } from '../models/user';
-import { HomeComponent } from "./home/home.component";
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, TooltipModule, NavbarComponent, HomeComponent],
+  imports: [RouterOutlet, TooltipModule, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
 })

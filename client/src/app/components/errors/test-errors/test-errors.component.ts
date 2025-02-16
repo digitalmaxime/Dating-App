@@ -10,6 +10,7 @@ import { Component, inject } from '@angular/core';
 export class TestErrorsComponent {
   baseUrl = 'https://localhost:5001/api/';
   private http = inject(HttpClient);
+  validationErrors: string[] = [];
 
   get404Error() {
     this.http.get(this.baseUrl + 'TestError/not-found').subscribe({
@@ -71,6 +72,7 @@ export class TestErrorsComponent {
       },
       error: (error) => {
         console.log(error);
+        this.validationErrors = error;
       },
       complete: () => {
         console.log("completed 'register-validation' test");

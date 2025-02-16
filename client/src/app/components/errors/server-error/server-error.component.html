@@ -1,0 +1,13 @@
+<h4>internal Server Error</h4>
+@if(error) {
+<h5 class="text-danger">Error : {{ error.message }}</h5>
+<p>What to do next</p>
+<ol>
+  <li>open chrome dev tools</li>
+  <li>examine the url of the failed request</li>
+  <li>reproduce the error in postman</li>
+</ol>
+<code>
+  {{ error.details }}
+</code>
+}

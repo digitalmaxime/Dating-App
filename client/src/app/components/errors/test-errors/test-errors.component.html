@@ -17,4 +17,16 @@
   >
     Test 400 validation error
   </button>
+
+  @if(this.validationErrors.length > 1) {
+    <div class="row m-5">
+
+      <ul class="text-danger">
+        @for(e of this.validationErrors; track $index) {
+          
+          <li>{{e}}</li>
+        }
+      </ul>
+    </div>
+  }
 </div>

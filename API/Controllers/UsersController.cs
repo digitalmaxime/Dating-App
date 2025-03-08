@@ -1,34 +1,31 @@
-using System;
-using System.Security.Claims;
-using API.Data;
+using System.Runtime.InteropServices.Marshalling;
+using API.Dtos;
 using API.Entities;
-using Microsoft.AspNetCore.Authentication;
+using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers;
-[ApiController]
-[Route("api/[controller]")]
-public class UsersController(DataContext dataContext) : ControllerBase
-{
 
+[ApiController]
+[Authorize]
+[Route("api/[controller]")]
+public class UsersController(IUserRepository userRepository, IMapper mapper) : ControllerBase
+{
     [AllowAnonymous]
-    [HttpGet()]
-    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
     {
-        var users = await dataContext.Users.ToListAsync();
+        var users = await userRepository.GetMembersAsync();
 
         return Ok(users);
     }
 
-    [Authorize]
-    [HttpGet("{id:int}")]
-
-    public async Task<ActionResult<AppUser>> GetUser(int id)
+    [HttpGet("{username}")] // api/users/lisa
+    public async Task<ActionResult<MemberDto>> GetUser(string username)
     {
-        var user = await dataContext.Users.FindAsync(id);
+        var user = await userRepository.GetMemberByUsernameAsync(username);
 
         return user == null ? NotFound() : Ok(user);
     }

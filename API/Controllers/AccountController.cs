@@ -22,7 +22,7 @@ namespace API.Controllers;
 public class AccountController(DataContext context, ITokenService tokenService, IValidator<RegisterDto> validator) : ControllerBase
 {
     [HttpPost("register")]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    public async Task<ActionResult<UserAccountDto>> Register(RegisterDto registerDto)
     {
             // validator.ValidateAndThrow(registerDto);
         var validationResult = validator.Validate(registerDto);
@@ -31,29 +31,30 @@ public class AccountController(DataContext context, ITokenService tokenService, 
             return UnprocessableEntity(validationResult.Errors);
         }
 
-        using var hmac = new HMACSHA512();
+        return Ok();
+        // using var hmac = new HMACSHA512();
 
-        var user = new AppUser()
-        {
-            UserName = registerDto.Username.ToLower(),
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-            PasswordSalt = hmac.Key
-        };
+        // var user = new AppUser()
+        // {
+        //     UserName = registerDto.Username.ToLower(),
+        //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+        //     PasswordSalt = hmac.Key
+        // };
 
-        if (await AlreadyExistingUsername(registerDto.Username))
-        {
-            return BadRequest("username already in use");
-        }
+        // if (await AlreadyExistingUsername(registerDto.Username))
+        // {
+        //     return BadRequest("username already in use");
+        // }
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
+        // context.Users.Add(user);
+        // await context.SaveChangesAsync();
 
-        var token = tokenService.CreateToken(user);
-        return Ok(new UserDto(user.UserName, token));
+        // var token = tokenService.CreateToken(user);
+        // return Ok(new UserAccountDto(user.UserName, token));
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    public async Task<ActionResult<UserAccountDto>> Login(LoginDto loginDto)
     {
         var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
@@ -75,7 +76,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
         var token = tokenService.CreateToken(user);
 
-        return new UserDto(user.UserName, token);
+        return new UserAccountDto(user.UserName, token);
     }
 
 

@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../../models/user';
 import { map } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class AccountService {
   
   private http: HttpClient = inject(HttpClient);
   
-  private url: string = "https://localhost:5001/api/";
+  private url: string = environment.apiUrl
 
   public login(username: string, password: string) {
     const loginUrl = this.url + "account/login"
@@ -38,7 +39,6 @@ export class AccountService {
     .pipe(
       map(user => {
         if (user) {
-          
           localStorage.setItem("user", JSON.stringify(user));
           this.currentUser.set(user);
         }

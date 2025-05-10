@@ -7,7 +7,6 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const accountService = inject(AccountService);
 
   const userToken = accountService.currentUser()?.token;
-debugger;
   if (!userToken) {
     return next(req);
   }

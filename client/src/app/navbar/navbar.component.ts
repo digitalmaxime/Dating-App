@@ -8,26 +8,33 @@ import { TitleCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
-  imports: [FormsModule, BsDropdownModule, RouterLink, RouterLinkActive, TitleCasePipe],
+  imports: [
+    FormsModule,
+    BsDropdownModule,
+    RouterLink,
+    RouterLinkActive,
+    TitleCasePipe,
+  ],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
   private router = inject(Router);
   private toastr = inject(ToastrService);
-ngOnInit() {
-  console.log(this.accountService.currentUser())
-}
   public accountService: AccountService = inject(AccountService);
   username: string = 'username';
   password: string = '';
+
+  ngOnInit() {
+    console.log(this.accountService.currentUser());
+  }
 
   public login() {
     this.accountService.login(this.username, this.password).subscribe({
       next: (_) => this.router.navigateByUrl('/members'),
       error: (err) => {
         console.log(err);
-        this.toastr.error(err.error)
+        this.toastr.error(err.error);
       },
       complete: () => {
         console.log('completed POST /login');

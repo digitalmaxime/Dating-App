@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddTransient<ExceptionMiddleware>();
 builder.Services.AddControllers();
+
 // builder.Services.AddScoped<IValidator<RegisterDto>, RegisterDtoValidator>();
 builder.Services.AddValidatorsFromAssembly(typeof(ApiLibrary).Assembly);
 
@@ -23,7 +24,7 @@ if (app.Environment.IsDevelopment())
         // Create a scoped service provider to resolve dependencies
         using var scope = app.Services.CreateScope();
 
-        // resolve the logger service
+        // resolve the service
         var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
         await dataContext.Database.MigrateAsync();
         await Seed.SeedData(dataContext);

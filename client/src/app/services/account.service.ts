@@ -20,8 +20,7 @@ export class AccountService {
     return this.http.post<User>(loginUrl, { username, password })
     .pipe(
       map(user => {
-        if (user) {
-          
+        if (user) {   
           localStorage.setItem("user", JSON.stringify(user));
           this.currentUser.set(user);
         }

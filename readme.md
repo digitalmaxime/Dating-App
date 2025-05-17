@@ -27,4 +27,4 @@ Add EfCore for code first migrations
 
 ## References
 
-[Udemy's Neil Cummings's Github](https://github.com/TryCatchLearn/DatingApp-v6)
+[Udemy's Neil Cummings's Github](https://github.com/trycatchlearn/datingapp)

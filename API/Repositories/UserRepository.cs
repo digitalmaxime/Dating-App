@@ -11,7 +11,7 @@ namespace API.Repositories;
 
 public class UserRepository(DataContext context, IMapper mapper) : IUserRepository
 {
-    public Task Update(AppUser user)
+    public Task SetEntryStateModified(AppUser user)
     {
         context.Entry(user).State = EntityState.Modified;
         return Task.CompletedTask;
@@ -19,7 +19,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
 
     public async Task<bool> SaveAllAsync()
     {
-        return await context.SaveChangesAsync() > 0;
+        return  await context.SaveChangesAsync() > 0;
     }
 
     public async Task<IEnumerable<AppUser>> GetUsersAsync()
@@ -34,7 +34,7 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
         return await context.Users.FindAsync(id);
     }
 
-    public async Task<AppUser?> GetUserByUsernameAsync(string username)
+    public async Task<AppUser?> GetUntrackedUserByUsernameAsync(string username)
     {
         return await context.Users
             .AsNoTracking()
@@ -61,5 +61,11 @@ public class UserRepository(DataContext context, IMapper mapper) : IUserReposito
     {
         context.Users.Remove(user);
         return context.SaveChanges() > 0;
+    }
+    
+    public async Task<bool> Update(AppUser user)
+    {
+        context.Update(user);
+        return  await context.SaveChangesAsync() > 0;
     }
 }

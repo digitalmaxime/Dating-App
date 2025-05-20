@@ -24,6 +24,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
     [HttpPost("register")]
     public async Task<ActionResult<UserAccountDto>> Register(RegisterDto registerDto)
     {
+        Thread.Sleep(TimeSpan.FromSeconds(2));
             // validator.ValidateAndThrow(registerDto);
         var validationResult = validator.Validate(registerDto);
         if (!validationResult.IsValid)
@@ -56,6 +57,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
     [HttpPost("login")]
     public async Task<ActionResult<UserAccountDto>> Login(LoginDto loginDto)
     {
+        Thread.Sleep(TimeSpan.FromSeconds(2));
         var user = await context.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
 
         if (user == null) return NotFound("invalid user");
@@ -82,6 +84,7 @@ public class AccountController(DataContext context, ITokenService tokenService, 
 
     private async Task<bool> AlreadyExistingUsername(string username)
     {
+        Thread.Sleep(TimeSpan.FromSeconds(2));
         return await context.Users.AnyAsync(u => u.UserName.ToLower() == username.ToLower());
     }
 }
